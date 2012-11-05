@@ -95,8 +95,8 @@
 
 // Get and display image
 - (void)displayImage {
-	if (_photo && _photoImageView.image == nil) {
-		
+    UIImage *img = [self.photoBrowser imageForPhoto:_photo];
+	if (_photo && (_photoImageView.image == nil ||  img!=_photoImageView.image) ) {
 		// Reset
 		self.maximumZoomScale = 1;
 		self.minimumZoomScale = 1;
@@ -104,7 +104,6 @@
 		self.contentSize = CGSizeMake(0, 0);
 		
 		// Get image from browser as it handles ordering of fetching
-		UIImage *img = [self.photoBrowser imageForPhoto:_photo];
 		if (img) {
 			
 			// Hide spinner

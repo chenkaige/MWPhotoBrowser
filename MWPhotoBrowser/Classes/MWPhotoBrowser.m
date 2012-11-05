@@ -591,6 +591,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 			return [photo underlyingImage];
 		} else {
             [photo loadUnderlyingImageAndNotify];
+            return [photo placeHoldImage];
 		}
 	}
 	return nil;
