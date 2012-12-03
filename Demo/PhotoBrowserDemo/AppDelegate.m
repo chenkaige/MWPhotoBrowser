@@ -28,7 +28,8 @@
     Menu *menu = [[[Menu alloc] initWithStyle:UITableViewStylePlain] autorelease];
     self.viewController = (UIViewController *)[[[UINavigationController alloc] initWithRootViewController:menu] autorelease];
                                   
-    self.window.rootViewController = self.viewController;
+//    self.window.rootViewController = self.viewController;
+    [self.window addSubview:self.viewController.view];
     [self.window makeKeyAndVisible];
     return YES;
 }

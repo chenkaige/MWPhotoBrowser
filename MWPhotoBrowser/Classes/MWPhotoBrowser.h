@@ -31,6 +31,9 @@
 // MWPhotoBrowser
 @interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate> 
 
+@property (nonatomic) int PADDING ;
+@property (nonatomic) BOOL enableCrcle;
+
 // Properties
 @property (nonatomic) BOOL displayActionButton;
 
@@ -43,6 +46,10 @@
 
 // Set page that photo browser starts on
 - (void)setInitialPageIndex:(NSUInteger)index;
+
+@property (nonatomic)BOOL preHasNavBar;
+
+@property (nonatomic,assign)UIScrollView *pagingScrollView;
 
 @end
 

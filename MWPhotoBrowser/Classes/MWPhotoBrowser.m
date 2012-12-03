@@ -18,7 +18,6 @@
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
-#define PADDING                 10
 #define PAGE_INDEX_TAG_OFFSET   1000
 #define PAGE_INDEX(page)        ([(page) tag] - PAGE_INDEX_TAG_OFFSET)
 
@@ -32,7 +31,7 @@
 	NSArray *_depreciatedPhotoData; // Depreciated
 	
 	// Views
-	UIScrollView *_pagingScrollView;
+	
 	
 	// Paging
 	NSMutableSet *_visiblePages, *_recycledPages;
@@ -70,6 +69,8 @@
 @property (nonatomic, retain) UIActionSheet *actionsSheet;
 @property (nonatomic, retain) MBProgressHUD *progressHUD;
 
+
+
 // Private Methods
 
 // Layout
@@ -86,7 +87,7 @@
 - (MWZoomingScrollView *)pageDisplayedAtIndex:(NSUInteger)index;
 - (MWZoomingScrollView *)pageDisplayingPhoto:(id<MWPhoto>)photo;
 - (MWZoomingScrollView *)dequeueRecycledPage;
-- (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index;
+- (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index realIndex:(NSUInteger)realIndex;
 - (void)didStartViewingPageAtIndex:(NSUInteger)index;
 
 // Frames
@@ -158,6 +159,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         _photos = [[NSMutableArray alloc] init];
         _displayActionButton = NO;
         _didSavePreviousStateOfNavBar = NO;
+        
+        self.PADDING = 10;
         
         // Listen for MWPhoto notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -362,6 +365,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:animated];
     }
     
+    
     // Navigation bar appearance
     if (!_viewIsActive && [self.navigationController.viewControllers objectAtIndex:0] != self) {
         [self storePreviousNavBarAppearance];
@@ -385,6 +389,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         // Bar state / appearance
         [self restorePreviousNavBarAppearance:animated];
         
+    }
+    if (!self.preHasNavBar) {
+        [self.navigationController setNavigationBarHidden:YES];
     }
     
     // Controls
@@ -642,14 +649,75 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 #pragma mark - Paging
 
+
 - (void)tilePages {
+    
+    if (self.enableCrcle) {
+        // Calculate which pages should be visible
+        // Ignore padding as paging bounces encroach on that
+        // and lead to false page loads
+        CGRect visibleBounds = _pagingScrollView.bounds;
+        int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+self.PADDING*2) / CGRectGetWidth(visibleBounds));
+        int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-self.PADDING*2-1) / CGRectGetWidth(visibleBounds));
+        int iRealFirstIndex =  iFirstIndex;
+        int iRealLastIndex =  iLastIndex;
+        
+        iFirstIndex = iFirstIndex % [self numberOfPhotos];
+        iLastIndex = iLastIndex % [self numberOfPhotos];
+        
+        if (iFirstIndex < 0) iFirstIndex = 0;
+        if (iFirstIndex > [self numberOfPhotos] - 1) iFirstIndex = [self numberOfPhotos] - 1;
+        if (iLastIndex < 0) iLastIndex = 0;
+        if (iLastIndex > [self numberOfPhotos] - 1) iLastIndex = [self numberOfPhotos] - 1;
+        
+        
+        // Recycle no longer needed pages
+        NSInteger pageIndex;
+        for (MWZoomingScrollView *page in _visiblePages) {
+            pageIndex = PAGE_INDEX(page);
+            if (pageIndex != (NSUInteger)iFirstIndex && pageIndex != (NSUInteger)iLastIndex) {
+                [_recycledPages addObject:page];
+                [page prepareForReuse];
+                [page removeFromSuperview];
+                MWLog(@"Removed page at index %i", PAGE_INDEX(page));
+            }
+        }
+        [_visiblePages minusSet:_recycledPages];
+        while (_recycledPages.count > 2) // Only keep 2 recycled pages
+            [_recycledPages removeObject:[_recycledPages anyObject]];
+        
+        // Add missing pages
+        for (NSUInteger realIndex = iRealFirstIndex; realIndex <= (NSUInteger)iRealLastIndex; realIndex++) {
+            NSUInteger index = realIndex % [self numberOfPhotos];
+            if (![self isDisplayingPageForIndex:index]) {
+                
+                // Add new page
+                MWZoomingScrollView *page = [self dequeueRecycledPage];
+                if (!page) {
+                    page = [[[MWZoomingScrollView alloc] initWithPhotoBrowser:self] autorelease];
+                }
+                [self configurePage:page forIndex:index realIndex:realIndex];
+                [_visiblePages addObject:page];
+                [_pagingScrollView addSubview:page];
+                MWLog(@"Added page at index %i", index);
+                
+                // Add caption
+                MWCaptionView *captionView = [self captionViewForPhotoAtIndex:index];
+                captionView.frame = [self frameForCaptionView:captionView atIndex:index];
+                [_pagingScrollView addSubview:captionView];
+                page.captionView = captionView;
+                
+            }
+        }
+        return;
+    }
 	
 	// Calculate which pages should be visible
 	// Ignore padding as paging bounces encroach on that
 	// and lead to false page loads
 	CGRect visibleBounds = _pagingScrollView.bounds;
-	int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+PADDING*2) / CGRectGetWidth(visibleBounds));
-	int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-PADDING*2-1) / CGRectGetWidth(visibleBounds));
+	int iFirstIndex = (int)floorf((CGRectGetMinX(visibleBounds)+self.PADDING*2) / CGRectGetWidth(visibleBounds));
+	int iLastIndex  = (int)floorf((CGRectGetMaxX(visibleBounds)-self.PADDING*2-1) / CGRectGetWidth(visibleBounds));
     if (iFirstIndex < 0) iFirstIndex = 0;
     if (iFirstIndex > [self numberOfPhotos] - 1) iFirstIndex = [self numberOfPhotos] - 1;
     if (iLastIndex < 0) iLastIndex = 0;
@@ -679,7 +747,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 			if (!page) {
 				page = [[[MWZoomingScrollView alloc] initWithPhotoBrowser:self] autorelease];
 			}
-			[self configurePage:page forIndex:index];
+			[self configurePage:page forIndex:index realIndex:index];
 			[_visiblePages addObject:page];
 			[_pagingScrollView addSubview:page];
 			MWLog(@"Added page at index %i", index);
@@ -721,8 +789,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	return thePage;
 }
 
-- (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index {
-	page.frame = [self frameForPageAtIndex:index];
+- (void)configurePage:(MWZoomingScrollView *)page forIndex:(NSUInteger)index realIndex:(NSUInteger)realIndex{
+	page.frame = [self frameForPageAtIndex:realIndex];
     page.tag = PAGE_INDEX_TAG_OFFSET + index;
     page.photo = [self photoAtIndex:index];
 }
@@ -778,8 +846,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (CGRect)frameForPagingScrollView {
     CGRect frame = self.view.bounds;// [[UIScreen mainScreen] bounds];
-    frame.origin.x -= PADDING;
-    frame.size.width += (2 * PADDING);
+    frame.origin.x -= self.PADDING;
+    frame.size.width += (2 * self.PADDING);
     return frame;
 }
 
@@ -790,8 +858,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // because it has a rotation transform applied.
     CGRect bounds = _pagingScrollView.bounds;
     CGRect pageFrame = bounds;
-    pageFrame.size.width -= (2 * PADDING);
-    pageFrame.origin.x = (bounds.size.width * index) + PADDING;
+    pageFrame.size.width -= (2 * self.PADDING);
+    pageFrame.origin.x = (bounds.size.width * index) + self.PADDING;
     return pageFrame;
 }
 
@@ -826,6 +894,36 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 	
+    if (self.enableCrcle){
+    // Checks
+	if (!_viewIsActive || _performingLayout || _rotating) return;
+	
+	// Tile pages
+	[self tilePages];
+	
+	// Calculate current page
+	CGRect visibleBounds = _pagingScrollView.bounds;
+	int index = (int)(floorf(CGRectGetMidX(visibleBounds) / CGRectGetWidth(visibleBounds)));
+    
+    int page = (index +[self numberOfPhotos]-1)  / [self numberOfPhotos];
+    if ( page > 0) {
+        self.pagingScrollView.contentSize = CGSizeMake(self.pagingScrollView.frame.size.width*[self numberOfPhotos]*(page+1), self.pagingScrollView.contentSize.height);
+    }
+    
+    if (index < 0) index = 0;
+    if (index>0) {
+        index = index % [self numberOfPhotos] ;
+    }
+    //	if (index > [self numberOfPhotos] - 1) index = [self numberOfPhotos] - 1;
+    
+	NSUInteger previousCurrentPage = _currentPageIndex;
+	_currentPageIndex = index;
+	if (_currentPageIndex != previousCurrentPage) {
+        [self didStartViewingPageAtIndex:index];
+    }
+        return;
+    }
+    
     // Checks
 	if (!_viewIsActive || _performingLayout || _rotating) return;
 	
@@ -853,6 +951,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
 	// Update nav when page changes
 	[self updateNavigation];
+    
+    
 }
 
 #pragma mark - Navigation
@@ -877,7 +977,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	// Change page
 	if (index < [self numberOfPhotos]) {
 		CGRect pageFrame = [self frameForPageAtIndex:index];
-		_pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - PADDING, 0);
+		_pagingScrollView.contentOffset = CGPointMake(pageFrame.origin.x - self.PADDING, 0);
 		[self updateNavigation];
 	}
 	
