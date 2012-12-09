@@ -13,8 +13,6 @@
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
 		4C6F96E414AF70BD00F8389A /* MWPhoto.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D814AF70BD00F8389A /* MWPhoto.h */; settings = {ATTRIBUTES = (); }; };
 		4C6F96E514AF70BD00F8389A /* MWPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D914AF70BD00F8389A /* MWPhoto.m */; };
-		4C6F96E614AF70BD00F8389A /* MWPhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96DA14AF70BD00F8389A /* MWPhotoBrowser.h */; settings = {ATTRIBUTES = (); }; };
-		4C6F96E714AF70BD00F8389A /* MWPhotoBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96DB14AF70BD00F8389A /* MWPhotoBrowser.m */; };
 		4C6F96E814AF70BD00F8389A /* MWTapDetectingImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96DC14AF70BD00F8389A /* MWTapDetectingImageView.h */; };
 		4C6F96E914AF70BD00F8389A /* MWTapDetectingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96DD14AF70BD00F8389A /* MWTapDetectingImageView.m */; };
 		4C6F96EA14AF70BD00F8389A /* MWTapDetectingView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96DE14AF70BD00F8389A /* MWTapDetectingView.h */; };
@@ -47,8 +45,6 @@
 		4C6F96D714AF70BD00F8389A /* MWCaptionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWCaptionView.m; path = Classes/MWCaptionView.m; sourceTree = SOURCE_ROOT; };
 		4C6F96D814AF70BD00F8389A /* MWPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWPhoto.h; path = Classes/MWPhoto.h; sourceTree = SOURCE_ROOT; };
 		4C6F96D914AF70BD00F8389A /* MWPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWPhoto.m; path = Classes/MWPhoto.m; sourceTree = SOURCE_ROOT; };
-		4C6F96DA14AF70BD00F8389A /* MWPhotoBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWPhotoBrowser.h; path = Classes/MWPhotoBrowser.h; sourceTree = SOURCE_ROOT; };
-		4C6F96DB14AF70BD00F8389A /* MWPhotoBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWPhotoBrowser.m; path = Classes/MWPhotoBrowser.m; sourceTree = SOURCE_ROOT; };
 		4C6F96DC14AF70BD00F8389A /* MWTapDetectingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWTapDetectingImageView.h; path = Classes/MWTapDetectingImageView.h; sourceTree = SOURCE_ROOT; };
 		4C6F96DD14AF70BD00F8389A /* MWTapDetectingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MWTapDetectingImageView.m; path = Classes/MWTapDetectingImageView.m; sourceTree = SOURCE_ROOT; };
 		4C6F96DE14AF70BD00F8389A /* MWTapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MWTapDetectingView.h; path = Classes/MWTapDetectingView.h; sourceTree = SOURCE_ROOT; };
@@ -107,8 +103,6 @@
 		4C6F96C914AF704100F8389A /* MWPhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				4C6F96DA14AF70BD00F8389A /* MWPhotoBrowser.h */,
-				4C6F96DB14AF70BD00F8389A /* MWPhotoBrowser.m */,
 				4C6F96D814AF70BD00F8389A /* MWPhoto.h */,
 				4C6F96D914AF70BD00F8389A /* MWPhoto.m */,
 				4CB08BA214B1F38700730E9F /* MWPhotoProtocol.h */,
@@ -169,7 +163,6 @@
 			files = (
 				4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */,
 				4C6F96E414AF70BD00F8389A /* MWPhoto.h in Headers */,
-				4C6F96E614AF70BD00F8389A /* MWPhotoBrowser.h in Headers */,
 				4C6F96E814AF70BD00F8389A /* MWTapDetectingImageView.h in Headers */,
 				4C6F96EA14AF70BD00F8389A /* MWTapDetectingView.h in Headers */,
 				4C6F96EC14AF70BD00F8389A /* MWZoomingScrollView.h in Headers */,
@@ -231,7 +224,6 @@
 			files = (
 				4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */,
 				4C6F96E514AF70BD00F8389A /* MWPhoto.m in Sources */,
-				4C6F96E714AF70BD00F8389A /* MWPhotoBrowser.m in Sources */,
 				4C6F96E914AF70BD00F8389A /* MWTapDetectingImageView.m in Sources */,
 				4C6F96EB14AF70BD00F8389A /* MWTapDetectingView.m in Sources */,
 				4C6F96ED14AF70BD00F8389A /* MWZoomingScrollView.m in Sources */,
