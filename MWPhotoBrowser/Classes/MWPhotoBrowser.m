@@ -186,6 +186,12 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)dealloc {
+
+    [connection cancel];
+    [connection release];
+    connection = nil;
+    
+    [_downloadData release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_previousNavBarTintColor release];
     [_navigationBarBackgroundImageDefault release];
@@ -259,6 +265,14 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Update
     [self reloadData];
     
+    if(self.is360){
+    if ([[UIDevice currentDevice] respondsToSelector:@selector(setOrientation:)]) {
+        [[UIDevice currentDevice] performSelector:@selector(setOrientation:)
+                                       withObject:(id)UIInterfaceOrientationLandscapeRight];
+        
+        self.pagingScrollView.pagingEnabled = NO;
+    }
+    }
 	// Super
     [super viewDidLoad];
 	
@@ -378,7 +392,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    
+    [self cancelDownload];
     // Check that we're being popped for good
     if ([self.navigationController.viewControllers objectAtIndex:0] != self &&
         ![self.navigationController.viewControllers containsObject:self]) {
@@ -402,6 +416,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     // Status bar
     if (self.wantsFullScreenLayout && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [[UIApplication sharedApplication] setStatusBarStyle:_previousStatusBarStyle animated:animated];
+    }
+    
+    
+    if(self.is360){
+        if ([[UIDevice currentDevice] respondsToSelector:@selector(setOrientation:)]) {
+            [[UIDevice currentDevice] performSelector:@selector(setOrientation:)
+                                           withObject:(id)UIInterfaceOrientationPortrait];
+            
+        }
     }
     
 	// Super
@@ -493,6 +516,15 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	_currentPageIndex = indexPriorToLayout;
 	_performingLayout = NO;
     
+}
+
+-(void)setIs360:(BOOL)is360{
+    if (is360) {
+        self.PADDING = 0;
+        self.enableCrcle = YES;
+        
+    }
+    _is360 = is360;
 }
 
 #pragma mark - Rotation
@@ -894,6 +926,8 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 	
+    [self cancelDownload];
+    
     if (self.enableCrcle){
     // Checks
 	if (!_viewIsActive || _performingLayout || _rotating) return;
@@ -1185,22 +1219,56 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)savePhoto {
     id <MWPhoto> photo = [self photoAtIndex:_currentPageIndex];
-    if ([photo underlyingImage]) {
-        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedString(@"Saving", @"Displayed with ellipsis as 'Saving...' when an item is in the process of being saved")]];
-        [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
+//    if ([photo underlyingImage]) {
+//        [self showProgressHUDWithMessage:[NSString stringWithFormat:@"%@\u2026" , NSLocalizedString(@"Saving", @"Displayed with ellipsis as 'Saving...' when an item is in the process of being saved")]];
+//        [self performSelector:@selector(actuallySavePhoto:) withObject:photo afterDelay:0];
+//    }
+    
+    if ([photo fullPathImageUrl]) {
+        [self downloadWithURL:[photo fullPathImageUrl]];
     }
 }
 
-- (void)actuallySavePhoto:(id<MWPhoto>)photo {
-    if ([photo underlyingImage]) {
-        UIImageWriteToSavedPhotosAlbum([photo underlyingImage], self, 
+-(void)cancelDownload {
+    [connection release];
+    [connection cancel];
+    connection = nil;
+
+    if (HUD) {
+        [HUD hide:YES];
+        HUD = nil;
+    }
+}
+
+- (void)downloadWithURL:(NSString *)url {
+    [self cancelDownload];
+	NSURL *URL = [NSURL URLWithString:url];
+	NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+	[connection start];
+    
+	HUD = [[MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES] retain];
+	HUD.delegate = self;
+    HUD.labelText = @"下载中";
+    HUD.userInteractionEnabled = NO;
+}
+
+- (void)actuallySavePhoto:(NSData *)picData {
+    if (picData) {
+        UIImageWriteToSavedPhotosAlbum([UIImage imageWithData:picData], self, 
                                        @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
-    [self showProgressHUDCompleteMessage: error ? NSLocalizedString(@"Failed", @"Informing the user a process has failed") : NSLocalizedString(@"Saved", @"Informing the user an item has been saved")];
-    [self hideControlsAfterDelay]; // Continue as normal...
+//    [self showProgressHUDCompleteMessage: error ? NSLocalizedString(@"Failed", @"Informing the user a process has failed") : NSLocalizedString(@"Saved", @"Informing the user an item has been saved")];
+//    [self hideControlsAfterDelay]; // Continue as normal...
+    if (error==nil) {
+        HUD.customView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]] autorelease];
+        HUD.mode = MBProgressHUDModeCustomView;
+        HUD.labelText = @"保存成功";
+    } 
+	[HUD hide:YES afterDelay:2];
 }
 
 - (void)copyPhoto {
@@ -1255,4 +1323,51 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	[self dismissModalViewControllerAnimated:YES];
 }
 
+
+
+#pragma mark -
+#pragma mark NSURLConnectionDelegete
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+	expectedLength = [response expectedContentLength];
+	currentLength = 0;
+    self.downloadData = [NSMutableData data];
+	HUD.mode = MBProgressHUDModeDeterminate;
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+	currentLength += [data length];
+	HUD.progress = currentLength / (float)expectedLength;
+    [self.downloadData appendData:data];
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)c {
+    [self actuallySavePhoto:self.downloadData];
+    NSLog(@"connectionDidFinishLoading");
+    
+    if (connection) {
+        [connection release];
+        connection = nil;
+    }
+}
+
+- (void)connection:(NSURLConnection *)c didFailWithError:(NSError *)error {
+	[HUD hide:YES];
+    NSLog(@"didFailWithError");
+    
+    if (connection) {
+        [connection release];
+        connection = nil;
+    }
+}
+
+#pragma mark -
+#pragma mark MBProgressHUDDelegate methods
+
+- (void)hudWasHidden:(MBProgressHUD *)hud {
+	// Remove HUD from screen when the HUD was hidded
+	[HUD removeFromSuperview];
+	[HUD release];
+	HUD = nil;
+}
 @end

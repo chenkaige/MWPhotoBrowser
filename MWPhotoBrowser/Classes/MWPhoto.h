@@ -20,6 +20,7 @@
 // Properties
 @property (nonatomic, retain) NSString *caption;
 @property (nonatomic, retain) UIImage *placehold_img;
+@property (nonatomic, copy)NSString *fullpath_image_url;
 // Class
 + (MWPhoto *)photoWithImage:(UIImage *)image;
 + (MWPhoto *)photoWithFilePath:(NSString *)path;

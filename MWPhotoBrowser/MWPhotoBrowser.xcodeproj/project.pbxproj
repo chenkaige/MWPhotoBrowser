@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0EA380331573EA4B003F4582 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EA380321573EA4B003F4582 /* ImageIO.framework */; };
+		37D4B7DA1681690D00D7DA9C /* DDProgressView.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D4B7D81681690D00D7DA9C /* DDProgressView.h */; };
+		37D4B7DB1681690D00D7DA9C /* DDProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D4B7D91681690D00D7DA9C /* DDProgressView.m */; };
 		4C6F96C814AF704100F8389A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C6F96C714AF704100F8389A /* Foundation.framework */; };
 		4C6F96E214AF70BD00F8389A /* MWCaptionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6F96D614AF70BD00F8389A /* MWCaptionView.h */; };
 		4C6F96E314AF70BD00F8389A /* MWCaptionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C6F96D714AF70BD00F8389A /* MWCaptionView.m */; };
@@ -40,6 +42,8 @@
 
 /* Begin PBXFileReference section */
 		0EA380321573EA4B003F4582 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		37D4B7D81681690D00D7DA9C /* DDProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDProgressView.h; sourceTree = SOURCE_ROOT; };
+		37D4B7D91681690D00D7DA9C /* DDProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDProgressView.m; sourceTree = SOURCE_ROOT; };
 		4C6F96C414AF704100F8389A /* libMWPhotoBrowser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMWPhotoBrowser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C6F96C714AF704100F8389A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		4C6F96CB14AF704100F8389A /* MWPhotoBrowser-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MWPhotoBrowser-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -124,6 +128,8 @@
 		4C6F96EE14AF70BF00F8389A /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				37D4B7D81681690D00D7DA9C /* DDProgressView.h */,
+				37D4B7D91681690D00D7DA9C /* DDProgressView.m */,
 				4C6F96DC14AF70BD00F8389A /* MWTapDetectingImageView.h */,
 				4C6F96DD14AF70BD00F8389A /* MWTapDetectingImageView.m */,
 				4C6F96DE14AF70BD00F8389A /* MWTapDetectingView.h */,
@@ -175,6 +181,7 @@
 				4C6F96EC14AF70BD00F8389A /* MWZoomingScrollView.h in Headers */,
 				4C6F96F614AF710800F8389A /* MBProgressHUD.h in Headers */,
 				4CB08BA314B1F38700730E9F /* MWPhotoProtocol.h in Headers */,
+				37D4B7DA1681690D00D7DA9C /* DDProgressView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +243,7 @@
 				4C6F96EB14AF70BD00F8389A /* MWTapDetectingView.m in Sources */,
 				4C6F96ED14AF70BD00F8389A /* MWZoomingScrollView.m in Sources */,
 				4C6F96F714AF710800F8389A /* MBProgressHUD.m in Sources */,
+				37D4B7DB1681690D00D7DA9C /* DDProgressView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

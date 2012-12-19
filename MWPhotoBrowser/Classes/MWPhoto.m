@@ -79,6 +79,7 @@ caption = _caption;
 }
 
 - (void)dealloc {
+    [_fullpath_image_url release];
     [_placehold_img release];
     [_caption release];
     [[SDWebImageManager sharedManager] cancelForDelegate:self];
@@ -89,6 +90,10 @@ caption = _caption;
 }
 
 #pragma mark MWPhoto Protocol Methods
+
+- (NSString *)fullPathImageUrl {
+    return self.fullpath_image_url;
+}
 
 -(UIImage *)placeHoldImage {
     return self.placehold_img;

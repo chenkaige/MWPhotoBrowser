@@ -11,6 +11,7 @@
 #import "MWPhoto.h"
 #import "MWPhotoProtocol.h"
 #import "MWCaptionView.h"
+#import "MBProgressHUD.h"
 
 // Debug Logging
 #if 0 // Set to 1 to enable debug logging
@@ -29,10 +30,18 @@
 @end
 
 // MWPhotoBrowser
-@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate> 
+@interface MWPhotoBrowser : UIViewController <UIScrollViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate,MBProgressHUDDelegate>{
+    MBProgressHUD *HUD;
+    long long expectedLength;
+	long long currentLength;
+    NSURLConnection *connection;
+}
 
+@property (nonatomic,retain)NSMutableData *downloadData;
 @property (nonatomic) int PADDING ;
 @property (nonatomic) BOOL enableCrcle;
+
+@property (nonatomic) BOOL is360;
 
 // Properties
 @property (nonatomic) BOOL displayActionButton;

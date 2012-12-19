@@ -58,4 +58,6 @@
 - (NSString *)caption; 
 
 - (UIImage *)placeHoldImage;
+
+- (NSString *)fullPathImageUrl; //原始图地址
 @end
