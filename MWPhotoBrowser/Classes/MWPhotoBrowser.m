@@ -435,6 +435,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     _viewIsActive = YES;
+    if (!self.preHasNavBar) {
+        [self.navigationController setNavigationBarHidden:NO];
+    }
 }
 
 #pragma mark - Nav Bar Appearance
@@ -1267,7 +1270,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         HUD.customView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]] autorelease];
         HUD.mode = MBProgressHUDModeCustomView;
         HUD.labelText = @"保存成功";
-    } 
+    }  else {
+        [self showProgressHUDWithMessage:@"保存图片失败"];
+    }
 	[HUD hide:YES afterDelay:2];
 }
 
@@ -1354,7 +1359,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)connection:(NSURLConnection *)c didFailWithError:(NSError *)error {
 	[HUD hide:YES];
     NSLog(@"didFailWithError");
-    
+    [self showProgressHUDWithMessage:@"下载失败"];
     if (connection) {
         [connection release];
         connection = nil;
