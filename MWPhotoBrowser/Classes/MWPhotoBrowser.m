@@ -419,13 +419,13 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     }
     
     
-    if(self.is360){
+//    if(self.is360){
         if ([[UIDevice currentDevice] respondsToSelector:@selector(setOrientation:)]) {
             [[UIDevice currentDevice] performSelector:@selector(setOrientation:)
                                            withObject:(id)UIInterfaceOrientationPortrait];
             
         }
-    }
+//    }
     
 	// Super
 	[super viewWillDisappear:animated];
