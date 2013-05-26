@@ -329,6 +329,11 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         // We're not first so show back button
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
+        if ([backButtonTitle length]<=0) {
+            backButtonTitle = @"返回";
+        }
+        //都叫返回吧。
+        backButtonTitle = @"返回";
         UIBarButtonItem *newBackButton = [[[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil] autorelease];
         // Appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
@@ -1250,7 +1255,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 	connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 	[connection start];
     
-	HUD = [[MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES] retain];
+	HUD = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
 	HUD.delegate = self;
     HUD.labelText = @"下载中";
     HUD.userInteractionEnabled = NO;
