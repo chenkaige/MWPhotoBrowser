@@ -186,7 +186,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 }
 
 - (void)dealloc {
-
+    
     [connection cancel];
     [connection release];
     connection = nil;
@@ -330,10 +330,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
         UIViewController *previousViewController = [self.navigationController.viewControllers objectAtIndex:self.navigationController.viewControllers.count-2];
         NSString *backButtonTitle = previousViewController.navigationItem.backBarButtonItem ? previousViewController.navigationItem.backBarButtonItem.title : previousViewController.title;
         if ([backButtonTitle length]<=0) {
-            backButtonTitle = @"返回";
+            backButtonTitle = NSLocalizedString(@"返回",@"");
         }
         //都叫返回吧。
-        backButtonTitle = @"返回";
+        backButtonTitle = NSLocalizedString(@"返回",@"");
         UIBarButtonItem *newBackButton = [[[UIBarButtonItem alloc] initWithTitle:backButtonTitle style:UIBarButtonItemStylePlain target:nil action:nil] autorelease];
         // Appearance
         if ([UIBarButtonItem respondsToSelector:@selector(appearance)]) {
@@ -1257,7 +1257,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     
 	HUD = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
 	HUD.delegate = self;
-    HUD.labelText = @"下载中";
+    HUD.labelText = NSLocalizedString(@"下载中",@"");
     HUD.userInteractionEnabled = NO;
 }
 
@@ -1274,9 +1274,9 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
     if (error==nil) {
         HUD.customView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"37x-Checkmark.png"]] autorelease];
         HUD.mode = MBProgressHUDModeCustomView;
-        HUD.labelText = @"保存成功";
+        HUD.labelText = NSLocalizedString(@"保存成功",@"");
     }  else {
-        [self showProgressHUDWithMessage:@"保存图片失败"];
+        [self showProgressHUDWithMessage:NSLocalizedString(@"保存图片失败",@"")];
     }
 	[HUD hide:YES afterDelay:2];
 }
@@ -1364,7 +1364,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)connection:(NSURLConnection *)c didFailWithError:(NSError *)error {
 	[HUD hide:YES];
     NSLog(@"didFailWithError");
-    [self showProgressHUDWithMessage:@"下载失败"];
+    [self showProgressHUDWithMessage:NSLocalizedString(@"下载失败",@"")];
     if (connection) {
         [connection release];
         connection = nil;
@@ -1376,8 +1376,10 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 
 - (void)hudWasHidden:(MBProgressHUD *)hud {
 	// Remove HUD from screen when the HUD was hidded
-	[HUD removeFromSuperview];
-	[HUD release];
+    HUD.delegate = nil;
+    HUD.canceled = YES;
+//	[HUD removeFromSuperview];
+//	[HUD release];
 	HUD = nil;
 }
 @end

@@ -341,6 +341,7 @@ typedef enum {
  */
 @property (assign, getter = isSquare) BOOL square;
 
+@property (nonatomic) BOOL canceled;
 @end
 
 
@@ -370,5 +371,7 @@ typedef enum {
  * Display mode - NO = round or YES = annular. Defaults to round.
  */
 @property (nonatomic, assign, getter = isAnnular) BOOL annular;
+
+
 
 @end

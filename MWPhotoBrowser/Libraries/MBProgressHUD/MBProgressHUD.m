@@ -254,7 +254,10 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 }
 
 - (void)hideDelayed:(NSNumber *)animated {
-	[self hide:[animated boolValue]];
+    if (!self.canceled) {
+        [self hide:[animated boolValue]];
+    }
+
 }
 
 #pragma mark - Timer callbacks
