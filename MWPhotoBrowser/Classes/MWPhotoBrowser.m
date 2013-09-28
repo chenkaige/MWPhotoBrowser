@@ -1377,7 +1377,7 @@ navigationBarBackgroundImageLandscapePhone = _navigationBarBackgroundImageLandsc
 - (void)hudWasHidden:(MBProgressHUD *)hud {
 	// Remove HUD from screen when the HUD was hidded
     HUD.delegate = nil;
-    HUD.canceled = YES;
+//    HUD.canceled = YES;
 //	[HUD removeFromSuperview];
 //	[HUD release];
 	HUD = nil;
